@@ -54,13 +54,16 @@ def ingest_incidents(x_shiftlore_key: str = Header(None)):
 
 @app.post("/guidance")
 def guidance(payload: dict, x_shiftlore_key: str = Header(None)):
+    print("PAYLOAD:", payload)
     verify_key(x_shiftlore_key)
-    operator_input = payload.get("input", "")
+
     response = client.chat.completions.create(
-        model="gpt-4.1",
+        model="gpt-4o-mini",
         messages=[
             {"role": "system", "content": "You are ShiftLore AMA Guidance."},
-            {"role": "user", "content": operator_input}
+            {"role": "user", "content": payload.get("input", "")}
         ]
     )
-    return {"guidance": response.choices[0].message["content"]}
+
+    return {"guidance": response.choices[0].message.content}
+
